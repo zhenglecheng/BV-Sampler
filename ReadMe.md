@@ -32,7 +32,7 @@ python3 main.py --dataset ppi-large --fast true --init_batch 1024 --sample_size 
 
 Ablation Study on ArXiv Dataset (Table 4)
 ```
-cd ablation_Study
+cd ablation_study
 ./run_ablation.sh
 
 ```
