@@ -28,3 +28,18 @@ Testing on the ArXiv Dataset with batch-only evaluation in sparse label setting 
 python3 main.py --dataset ogbn-arxiv --fast true --init_batch 1024 --sample_size 10240 --early_stop 500 --wd 1e-4  --batch_norm true --hidden_dim 256 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.05 --samp_inference true
 python3 main.py --dataset ppi-large --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 128 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.025 --samp_inference true
 ```
+
+
+Ablation Study on ArXiv Dataset (Table 4)
+```
+cd ablation_Study
+./run_ablation.sh
+
+```
+
+Bias Varince MSE computation (Table 10)
+```
+cd Bias_MSE_computation
+./run_contrastive_bvm.sh
+
+```

@@ -14,97 +14,12 @@ from utility import *
 import json
 from networkx.readwrite import json_graph
 
-# --dataset Cora --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --wd 5e-4 --seed 45
-# --dataset PubMed --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --early_stop 100 --wd 5e-4 --seed 42 --label_rate 0.05
-# --dataset Reddit --fast true --norm_feat false --hidden_dim 128 --init_batch 1024 --sample_size 5120 --early_stop 100 --wd 1e-4 --seed 45 --label_rate 0.05
-# --dataset ogbn-arxiv --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 256 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 1000 --lr 0.001 --label_rate 0.025
-# --dataset ogbn-arxiv --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 256 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.025 --samp_inference true
-# --dataset ppi-large --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 128 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.025 --samp_inference true
-# --dataset yelp --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 64 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 1000 --lr 0.001 --label_rate 0.025 --samp_inference true
-
 def set_seeds(seed: int = 123):
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
     return np.random.default_rng(seed=seed)
-
-#
-# def model_train(
-#     model            : OptISGCN,
-#     opt              : torch.optim.Optimizer,
-#     y                : torch.Tensor,
-#     csr_mat          : sp.csr_matrix,
-#     training_mask    : torch.Tensor,
-#     loss_fn          : nn.Module,
-#     stoch            : bool,
-#     losses           : list,
-#     batch_list       : list,
-#     labeled_indices  : np.ndarray,
-#     unlabeled_indices: np.ndarray,
-#     labeled_ratio    : float,
-#     con_weight       : float,
-# ) -> list:
-#     """
-#     One training step.
-#
-#     Loss = L_CE(labeled_batch)  +  λ_c · L_InfoNCE(unlabeled_batch)
-#
-#     The labeled and unlabeled portions of init_batch are always at known
-#     offsets (labeled first, unlabeled after), making it trivial to split
-#     the logits returned by forward() for the CE loss.
-#
-#     The InfoNCE loss is computed by calling forward_embed() *twice* on the
-#     unlabeled nodes, producing two distinct neighbourhood views from
-#     independent sampler draws — no separate augmentation needed.
-#     """
-#     model.train()
-#     opt.zero_grad()
-#
-#     if stoch:
-#         lab_bat, unlab_bat, init_bat = compose_mixed_batch(
-#             labeled_indices=labeled_indices,
-#             unlabeled_indices=unlabeled_indices,
-#             batch_size=batch_list[0],
-#             labeled_ratio=labeled_ratio,
-#             rng=model.rng)
-#     else:
-#         init_bat  = None
-#         lab_bat   = None
-#         unlab_bat = np.array([], dtype=np.int64)
-#
-#     # Determine whether InfoNCE is needed this step so we can request the
-#     # contrastive subgraph from forward() in the same sampling call.
-#     _need_contrastive = stoch and len(unlab_bat) > 1 and con_weight > 0.0
-#     out, contra_h, _, nce_subgraph = model(
-#         csr_mat           = csr_mat,
-#         drop              = False,
-#         stochastic        = stoch,
-#         batch_sizes       = batch_list,
-#         init_batch        = init_bat,
-#         contrastive_batch = unlab_bat if _need_contrastive else None)
-#
-#     if stoch:
-#         # Labeled nodes occupy the first len(lab_bat) rows of `out`
-#         n_lab  = len(lab_bat)
-#         labels = y[lab_bat]
-#         l_ce   = loss_fn(out[:n_lab], labels)
-#     else:
-#         l_ce = loss_fn(out[training_mask], y[training_mask])
-#
-#     total_loss = l_ce
-#
-#     if _need_contrastive:
-#         z1 = model.proj_head(contra_h)
-#         adj_out_nce, alpha_out_nce = nce_subgraph
-#         z2       = model.forward_embed_presampled(adj_out_nce, alpha_out_nce, drop=True)
-#         l_con    = con_weight * model.infoNCELoss(z1, z2)
-#         total_loss = total_loss + l_con
-#
-#     total_loss.backward()
-#     opt.step()
-#     losses.append(total_loss.item())
-#     return losses
 
 
 def model_train(

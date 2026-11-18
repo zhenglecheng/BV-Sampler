@@ -14,14 +14,6 @@ from utility import *
 import json
 from networkx.readwrite import json_graph
 
-# --dataset Cora --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --wd 5e-4 --seed 45
-# --dataset PubMed --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --early_stop 100 --wd 5e-4 --seed 42 --label_rate 0.05
-# --dataset Reddit --fast true --norm_feat false --hidden_dim 128 --init_batch 1024 --sample_size 5120 --early_stop 100 --wd 1e-4 --seed 45 --label_rate 0.05
-# --dataset ogbn-arxiv --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 256 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 1000 --lr 0.001 --label_rate 0.025
-# --dataset ogbn-arxiv --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 256 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.025 --samp_inference true
-# --dataset ppi-large --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 128 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 2000 --lr 0.001 --label_rate 0.025 --samp_inference true
-# --dataset yelp --fast true --init_batch 1024 --sample_size 10240 --early_stop 300 --wd 1e-4  --batch_norm true --hidden_dim 64 --num_layers 2 --drop 0.5 --scale_factor 5 --epochs 1000 --lr 0.001 --label_rate 0.025 --samp_inference true
-
 def set_seeds(seed: int = 123):
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -73,8 +65,6 @@ def model_train(
         lab_bat   = None
         unlab_bat = np.array([], dtype=np.int64)
 
-    # Determine whether InfoNCE is needed this step so we can request the
-    # contrastive subgraph from forward() in the same sampling call.
     _need_contrastive = stoch and len(unlab_bat) > 1 and con_weight > 0.0
     out, contra_h, _, nce_subgraph = model(
         csr_mat           = csr_mat,
@@ -172,6 +162,7 @@ def load_data_yelp(prefix, normalize=True, load_walks=False):
     if feats is None:
         feats = np.ones((G.number_of_nodes(), 10))
     return G, feats, id_map, walks, class_map
+
 
 # Run main
 if __name__=="__main__":
