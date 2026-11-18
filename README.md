@@ -7,7 +7,7 @@
 ## Command 
 
 
-Testing on the PubMed, Reddit and ArXiv Datasets with full graph evaluation in sparse label setting (Table 1)
+Testing on the PubMed, Reddit and ArXiv Datasets with full graph evaluation in rich label setting (Table 1)
 ```
 python3 main.py --dataset Cora --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --wd 5e-4 --seed 42
 python3 main.py --dataset PubMed --norm_feat true --fast true --hidden_dim 16 --init_batch 256 --sample_size 400 --early_stop 10 --wd 5e-4 --seed 42 
