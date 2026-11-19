@@ -339,7 +339,11 @@ if __name__=="__main__":
             )
             print(f"Loading the best model at iteration of {best_iter}...")
 
-        final_test_acc = test(model, X, y, adjmat, testing_indices, [])
+        if args.samp_inference:
+            final_test_acc = sample_final_test(model, y, adjmat, inference_batches, args.num_samp_inference, testing_indices, test_acc)
+        else:
+            # No sampling
+            final_test_acc = test(model, X, y, adjmat, testing_indices, [])
         # ── Results ───────────────────────────────────────────────────────────
         print(f"\nRESULTS:")
         print(f"[LOSS]  min training loss : {min(loss_hist):.5f}")

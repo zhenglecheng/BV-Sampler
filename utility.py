@@ -12,6 +12,17 @@ def test(model, x, y, csr_mat, mask, accuracy):
     return accuracy
 
 
+def sample_final_test(model, y, csr_mat, batch_list, num_samp_inf, mask, accuracy):
+    model.eval()
+    total_out, total_y = np.array([]), np.array([])
+    for i in range(0, len(mask), batch_list[-1]):
+        m = mask[i:i + batch_list[-1]]
+        out, _, ib = model.sample_predict(csr_mat, m, batch_list, num_samp_inf)
+        total_out = np.concatenate((total_out, out.cpu().numpy())).flatten()
+        total_y   = np.concatenate((total_y, y[ib].cpu().numpy())).flatten()
+    accuracy.append(F1(total_y, total_out, average='micro') * 100.0)
+    return accuracy
+
 def sample_test(model, x, y, csr_mat, batch_list, num_samp_inf, mask, accuracy):
     model.eval()
     total_out, total_y = np.array([]), np.array([])
